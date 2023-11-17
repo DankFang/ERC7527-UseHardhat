@@ -21,13 +21,15 @@ describe("Factory",function(){
         const erc7527App = await ERC7527App.deploy();
 
         // 
-        const UseERC7527Factory = await ethers.getContractFactory("useERC7527Factory");
+        const UseERC7527Factory = await ethers.getContractFactory("useERC7527Factory",{
+            value:ethers.parseEther("10"), 
+        });
         const useERC7527Factory = await UseERC7527Factory.deploy();
 
         return {erc7527Factory,erc7527Agency,erc7527App,useERC7527Factory};
         
     }
-    it("use deployWrap", async function(){
+    it("use deployWrap, wrap , unwrap", async function(){
         const {erc7527Factory,erc7527Agency,erc7527App,useERC7527Factory} = await loadFixture(deployFactory)
         
         console.log("erc7527Factory Address is   "+erc7527Factory.target);//0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
@@ -46,5 +48,16 @@ describe("Factory",function(){
 
         console.log("appInstance Address is     " + appInstance);
         console.log("agencyInstance Address is  " + agencyInstance);
+
+        const [owner, otherAccount] = await ethers.getSigners();
+
+        await useERC7527Factory.testWarp();
+        const warpReturn = await useERC7527Factory.warpReturn();
+        console.log(warpReturn);
+
+        // 
+        await useERC7527Factory.testUnwarp();
+        const unwarpReturn = await useERC7527Factory.unwarpReturn();
+        console.log(unwarpReturn);
     })
 })
